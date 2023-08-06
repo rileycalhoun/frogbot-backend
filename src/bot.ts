@@ -34,6 +34,8 @@ const sendMessages = async () => {
 
         const zonedData = utcToZonedTime(new Date(), guild.timezone as string);
         const day = zonedData.getDay();
+        if(day === 0) return;
+
         channel.send({
             files: [
                 `./images/${day}.png`
