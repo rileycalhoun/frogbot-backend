@@ -3,7 +3,7 @@ import { utcToZonedTime } from 'date-fns-tz';
 import Guilds from './models/Guild';
 import * as mongo from './mongo';
 
-const { BOT_TOKEN, BOT_ID, DASHBOARD_URL } = process.env;
+const { BOT_TOKEN, BOT_ID, DASHBOARD_URI } = process.env;
 
 if(!BOT_TOKEN) {
     console.log('No bot token provided!');
@@ -28,7 +28,7 @@ const setStatus = async () => {
         activities: [{
             name: `${guildCount} servers`,
             type: ActivityType.Watching,
-            url: `${DASHBOARD_URL}`
+            url: `${DASHBOARD_URI}`
         }]
     })
 }
