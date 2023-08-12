@@ -25,11 +25,9 @@ const sendMessages = async () => {
     const allGuilds = await Guilds.find({});
     allGuilds.forEach(guild => {
         const nickname = guild.nickname;
-        if(nickname) {
-            let self = client.guilds.cache.get(guild.id)
+        let self = client.guilds.cache.get(guild.id)
                 ?.members.cache.get(BOT_ID);
-            self?.setNickname(nickname as string);
-        }
+        self?.setNickname(nickname as string);
 
         const currentTime = new Date()
             .toLocaleTimeString('en-US', {
