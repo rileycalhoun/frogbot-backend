@@ -1,9 +1,9 @@
-import { Client, IntentsBitField } from 'discord.js';
-import Guilds from './models/Guild';
+import { ActivityType, Client, IntentsBitField } from 'discord.js';
 import { utcToZonedTime } from 'date-fns-tz';
+import Guilds from './models/Guild';
 import * as mongo from './mongo';
 
-const { BOT_TOKEN, BOT_ID } = process.env;
+const { BOT_TOKEN, BOT_ID, DASHBOARD_URL } = process.env;
 
 if(!BOT_TOKEN) {
     console.log('No bot token provided!');
@@ -21,14 +21,31 @@ const client = new Client({
     intents: [IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildMessages]
 });
 
-const sendMessages = async () => {
+const setStatus = async () => {
+    const guildCount = client.guilds.cache.size;
+    client.user?.setPresence({
+        status: 'online',
+        activities: [{
+            name: `${guildCount} servers`,
+            type: ActivityType.Watching,
+            url: `${DASHBOARD_URL}`
+        }]
+    })
+}
+
+const checkNicknames = async () => {
     const allGuilds = await Guilds.find({});
     allGuilds.forEach(guild => {
         const nickname = guild.nickname;
         let self = client.guilds.cache.get(guild.id)
                 ?.members.cache.get(BOT_ID);
         self?.setNickname(nickname as string);
+    });
+}
 
+const sendMessages = async () => {
+    const allGuilds = await Guilds.find({});
+    allGuilds.forEach(guild => {
         const currentTime = new Date()
             .toLocaleTimeString('en-US', {
                 timeZone: guild.timezone as string,
@@ -68,6 +85,9 @@ client.on('guildAvailable', guild => mongo.createIfAbsent(guild));
 client.on('guildCreate', guild => mongo.createIfAbsent(guild));
 
 client.on('ready', () => {
+    setInterval(async () => sendMessages(), 30000);
+    setInterval(async () => checkNicknames(), 10000);
+    setInterval(async () => setStatus(), 60000);
+
     console.log('Bot is ready!');
-    setInterval(async () => sendMessages(), 10000);
 });
