@@ -85,7 +85,7 @@ client.on('guildAvailable', guild => mongo.createIfAbsent(guild));
 client.on('guildCreate', guild => mongo.createIfAbsent(guild));
 
 client.on('ready', () => {
-    setInterval(async () => sendMessages(), 30000);
+    setInterval(async () => sendMessages(), 60000);
     setInterval(async () => checkNicknames(), 10000);
     setInterval(async () => setStatus(), 60000);
 
