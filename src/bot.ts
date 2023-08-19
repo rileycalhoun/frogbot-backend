@@ -15,7 +15,7 @@ if(!BOT_ID) {
     process.exit(0);
 }
 
-
+mongo.connect();
 
 const client = new Client({
     intents: [IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildMessages]
@@ -78,16 +78,15 @@ const sendMessages = async () => {
     });
 }
 
-mongo.connect();
-client.login(BOT_TOKEN);
-
 client.on('guildAvailable', guild => mongo.createIfAbsent(guild));
 client.on('guildCreate', guild => mongo.createIfAbsent(guild));
 
 client.on('ready', () => {
-    setInterval(async () => sendMessages(), 60000);
-    setInterval(async () => checkNicknames(), 10000);
-    setInterval(async () => setStatus(), 60000);
+    setInterval(async () => sendMessages(), 60_000);
+    setInterval(async () => checkNicknames(), 10_000);
+    setInterval(async () => setStatus(), 60_000);
 
-    console.log('Bot is ready!');
+    console.log(`Shard ${client.shard?.ids} is ready!`);
 });
+
+client.login(BOT_TOKEN);

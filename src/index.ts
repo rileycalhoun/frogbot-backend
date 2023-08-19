@@ -7,7 +7,8 @@ const { BOT_TOKEN } = process.env;
 const manager = new ShardingManager('./src/bot.js', {
     respawn: true,
     token: BOT_TOKEN,
-    totalShards: 'auto'
+    totalShards: 1,
+    silent: false    
 });
 
 manager.on('shardCreate', shard => {
@@ -21,9 +22,7 @@ manager.on('shardCreate', shard => {
 
 });
 
-(async () => {
-    manager.spawn();
-})();
+manager.spawn();
 
 process.on('SIGTERM', async () => {
     manager.shards.forEach(shard => shard.kill());
