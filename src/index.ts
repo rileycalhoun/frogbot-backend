@@ -22,9 +22,10 @@ manager.on('shardCreate', shard => {
 
 });
 
-manager.spawn();
-
-process.on('SIGTERM', async () => {
+function exit() {
     manager.shards.forEach(shard => shard.kill());
     process.exit(0);
-});
+}
+
+process.on('SIGTERM', exit);
+manager.spawn();
